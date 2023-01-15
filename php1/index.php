@@ -1,45 +1,47 @@
 <?php
-    include 'functions/functions.php';
+    include 'functions.php';
 
     echo 'ahoj Wezeo!'; 
     echo "</br>";
+    echo "</br>";
+
+    $now = date("d.m.Y H:i:s");
+
+    //testing time
+    $now = date("d.m.Y").' 07:58:23';
+    echo $now;
+    echo "</br>";
+    echo "</br>";
+
+    //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
+    checkArrival($now);
+
+    echo "</br>";
+    echo "</br>";
+
 
     //check if file exist
-    $file = makeFile('time_log.txt');
+    $file = makeFile('timeLog.txt');
 
     //get data from time log
-    $dataInFile = file_get_contents('time_log.txt');
+    $array = getData('timeLog.txt');
 
-    //decode data
-    $array = json_decode($dataInFile) ?: [];
-    
-    //current date and time
-    $data = [
-        'date' => date("d.m.Y H:i:s"),
-        'delay'=>'delay'
-        ];
+    //check if student has delay
+    $delay = hasDelay($now);
 
-    //array for writing into time log
-    array_push($array, $data);
+    //write data into timelog
+    pushData($array, $now, $delay);
 
-    file_put_contents('time_log.txt', json_encode($array));
+    //get data from time log to show with the newest record
+    $array = getData('timeLog.txt');
 
-
-    foreach ($array as $data) {
-
-        $day = substr($data, 0, 10);
-        $time = substr($data, -8);
-        $schoolStart = $day." 08:00:00";
-
-        if (strtotime($data) > strtotime($schoolStart)) {
-            echo "MESKANIE";
+    if ( !empty($array)) {        
+        foreach ($array as $data) {
+            echo $data->date.' '.$data->delay;
+            echo "</br>";
         }
-        echo $data;
+    }else {
+        echo 'Nothing to display!';
         echo "</br>";
-        // echo strtotime($data), "\n";
-        // echo date("H:i:s", strtotime($data))."\n";
-        // echo strtotime($data), "\n";
     }
-
-
 ?>
