@@ -7,8 +7,6 @@
 
     $now = date("d.m.Y H:i:s");
 
-    //testing time
-    $now = date("d.m.Y").' 07:58:23';
     echo $now;
     echo "</br>";
     echo "</br>";
@@ -18,7 +16,6 @@
 
     echo "</br>";
     echo "</br>";
-
 
     //check if file exist
     $file = makeFile('timeLog.txt');
@@ -35,12 +32,15 @@
     //get data from time log to show with the newest record
     $array = getData('timeLog.txt');
 
-    if ( !empty($array)) {        
+    if ( !empty($array)) 
+    {        
         foreach ($array as $data) {
             echo $data->date.' '.$data->delay;
             echo "</br>";
-        }
-    }else {
+    }
+    }
+    else 
+    {
         echo 'Nothing to display!';
         echo "</br>";
     }

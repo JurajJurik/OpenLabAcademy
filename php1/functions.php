@@ -1,23 +1,24 @@
 <?php
 
 function makeFile( $filename )
+{
+	// if files doesn't exist, create the file and close it
+	if ( ! is_file( $filename ) )
 	{
-		// if files doesn't exist, create the file and close it
-		if ( ! is_file( $filename ) )
-		{
-			fclose( fopen($filename, 'x') );
-			return true;
-		}
-
-		// file already exists
-		return false;
+		fclose( fopen($filename, 'x') );
+		return true;
 	}
+
+	// file already exists
+	return false;
+}
 
 function checkArrival($now)
 {
     $date = new DateTimeImmutable($now);
 
-	if ($date->format('H') < 24 && $date->format('H') >= 20) {
+	if ($date->format('H') < 24 && $date->format('H') >= 20) 
+	{
 		die("It is not possible to arrive between 20:00 and 00:00 to school!");
 	}
 }
@@ -25,15 +26,20 @@ function checkArrival($now)
 function hasDelay($now, $schoolStartTime = '08:00:00')
 {
 	$schoolStart = date("d.m.Y").$schoolStartTime;
-		if (strtotime($now) > strtotime($schoolStart)) {
+		if (strtotime($now) > strtotime($schoolStart)) 
+		{
 			$origin = new DateTime($schoolStart);
     		$target = new DateTime($now);
     		$interval = $origin->diff($target);
 
-			$delayTime = sprintf("%02d", $interval->h).':'.sprintf("%02d", $interval->i).':'.sprintf("%02d", $interval->s);
+			//$delayTime = sprintf("%02d", $interval->h).':'.sprintf("%02d", $interval->i).':'.sprintf("%02d", $interval->s);
+
+			$delayTime = vsprintf("%02d:%02d:%02d", [$interval->h, $interval->i, $interval->s]);
 
 			$delay = 'Student is '.$delayTime.' late!';
-		}else {
+		}
+		else 
+		{
 			$delay = '';
 		}
 
