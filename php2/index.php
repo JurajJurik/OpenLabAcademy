@@ -1,5 +1,6 @@
 <?php
     include 'functions.php';
+    include 'config.php';
 
     echo 'ahoj Wezeo!'; 
     echo "</br>";
@@ -27,7 +28,7 @@
     $delay = hasDelay($now);
 
     //write data into timelog
-    pushData($array, $now, $delay);
+    //pushData($array, $now, $delay);
 
     //get data from time log to show with the newest record
     $array = getData('timeLog.txt');

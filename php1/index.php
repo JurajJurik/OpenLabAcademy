@@ -1,5 +1,6 @@
 <?php
     include 'functions.php';
+    include 'config.php';
 
     echo 'ahoj Wezeo!'; 
     echo "</br>";
