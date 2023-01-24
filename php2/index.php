@@ -12,8 +12,10 @@
     echo "</br>";
     echo "</br>";
 
+    include 'form.php';
+    
     //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
-    checkArrival($now);
+    //checkArrival($now);
 
     echo "</br>";
     echo "</br>";
