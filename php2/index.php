@@ -2,20 +2,14 @@
     include 'functions.php';
     include 'config.php';
 
-    echo 'ahoj Wezeo!'; 
-    echo "</br>";
-    echo "</br>";
-
     $now = date("d.m.Y H:i:s");
-
-    echo $now;
-    echo "</br>";
-    echo "</br>";
+    $studentName = null;
 
     include 'form.php';
+    $studentName = $_POST['studentName'];
     
     //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
-    //checkArrival($now);
+    checkArrival($now);
 
     echo "</br>";
     echo "</br>";
@@ -27,10 +21,10 @@
     $array = getData('timeLog.txt');
 
     //check if student has delay
-    $delay = hasDelay($now);
+    $delay = hasDelay($now, $studentName);
 
     //write data into timelog
-    //pushData($array, $now, $delay);
+    pushData($array, $now, $delay, $studentName);
 
     //get data from time log to show with the newest record
     $array = getData('timeLog.txt');

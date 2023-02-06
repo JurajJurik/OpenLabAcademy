@@ -23,7 +23,7 @@ function checkArrival($now)
 	}
 }
 
-function hasDelay($now, $schoolStartTime = '08:00:00')
+function hasDelay($now, $studentName, $schoolStartTime = '08:00:00')
 {
 	$schoolStart = date("d.m.Y").$schoolStartTime;
 		if (strtotime($now) > strtotime($schoolStart)) 
@@ -32,11 +32,9 @@ function hasDelay($now, $schoolStartTime = '08:00:00')
     		$target = new DateTime($now);
     		$interval = $origin->diff($target);
 
-			//$delayTime = sprintf("%02d", $interval->h).':'.sprintf("%02d", $interval->i).':'.sprintf("%02d", $interval->s);
-
 			$delayTime = vsprintf("%02d:%02d:%02d", [$interval->h, $interval->i, $interval->s]);
 
-			$delay = 'Student is '.$delayTime.' late!';
+			$delay = $studentName.' is '.$delayTime.' late!';
 		}
 		else 
 		{
@@ -57,12 +55,13 @@ function getData($file)
 	return $array;
 }
 
-function pushData($array, $now, $delay)
+function pushData($array, $now, $delay, $studentName)
 {
 	//arrival time and delay time
     $data = [
         'date'  =>  $now,
-        'delay' =>  $delay
+        'delay' =>  $delay,
+		'studentName' =>  $studentName
         ];
 	//array for writing into time log
     array_push($array, $data);
