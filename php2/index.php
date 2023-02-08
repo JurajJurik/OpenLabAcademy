@@ -6,19 +6,14 @@
 
     include 'form.php';
 
-    $studentName = isset($_POST['studentName']) ? $studentName = $_POST['studentName'] : die('Write your name!');
-    
-    //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
-    checkArrival($now);
-
-    echo "</br>";
-    echo "</br>";
-
     //check if file exist
     $file = makeFile('timeLog.txt');
+    
+    //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
+    //checkArrival($now);
 
-    //get data from time log
-    $array = getData('timeLog.txt');
+    echo "</br>";
+    echo "</br>";
 
     //check if student has delay
     $delay = hasDelay($now, $studentName);

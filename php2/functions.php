@@ -70,4 +70,10 @@ function pushData($array, $now, $delay, $studentName)
 
 	return $data;
 }
+
+function goToBase ($url)
+{
+    header("Location: $url/index.php");
+    die('success');
+}
 ?>
