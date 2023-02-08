@@ -3,10 +3,10 @@
     include 'config.php';
 
     $now = date("d.m.Y H:i:s");
-    $studentName = null;
 
     include 'form.php';
-    $studentName = $_POST['studentName'];
+
+    $studentName = isset($_POST['studentName']) ? $studentName = $_POST['studentName'] : die('Write your name!');
     
     //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
     checkArrival($now);
