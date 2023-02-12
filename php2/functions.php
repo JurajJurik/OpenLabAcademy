@@ -64,13 +64,12 @@ function getStudentNames($file)
 	//get student name from json file
 	$dataInFile = file_get_contents($file);
 
-	//$array = json_decode($dataInFile, true) ?: [];
+	$array = json_decode($dataInFile, true) ?: [];
 
-	//return $array;
-	return $dataInFile;
+	return $array;
 }
 
-function pushData($array, $now, $delay, $studentName)
+function pushData($array, $now, $delay, $studentName, $studentNames)
 {
 	//arrival time and delay time
     $data = [
@@ -78,16 +77,22 @@ function pushData($array, $now, $delay, $studentName)
         'delay' =>  $delay,
 		'studentName' =>  $studentName
         ];
-		
-	$arrayStudents = [getStudentNames($studentName)];
-
+	
+	if (is_string($data['studentName'])) 
+	{	
 	array_push($array, $data);
-	array_push($arrayStudents, $data['studentName']);
+
+	$totalArrivals = array_push($studentNames, $data['studentName']);
 
     file_put_contents('timeLog.txt', json_encode($array));
-	file_put_contents('students.json', json_encode($studentName));
+	file_put_contents('students.json', json_encode($studentNames));
 
-	return $data;
+	return $totalArrivals;
+	}
+	else 
+	{
+		print_r ('That is not name!');
+	}
 }
 
 function goToBase ($url)

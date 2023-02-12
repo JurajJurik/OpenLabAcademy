@@ -15,7 +15,7 @@
     $file = makeFile('timeLog.txt');
     
     //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
-    checkArrival($now);
+    //checkArrival($now);
 
     echo "</br>";
     echo "</br>";
@@ -30,7 +30,10 @@
     $delay = hasDelay($now, $studentName);
 
     //write data into timelog and students json file
-    pushData($array, $now, $delay, $studentName);
+    $totalArrivals = pushData($array, $now, $delay, $studentName, $studentNames);
+
+    //number of total arrivals
+    echo 'Count of arrivals: '.$totalArrivals;
 
     //get data from time log to show with the newest record
     $array = getData('timeLog.txt');
