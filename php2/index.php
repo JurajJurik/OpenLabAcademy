@@ -6,16 +6,19 @@
 
     include 'form.php';
 
-    $studentName = isset($_GET['studentName']) ? $studentName = $_GET['studentName'] : print_r ('Write your name!');
-
-    //check if student file exist
-    $students = makeFile('students.json');
+    $studentName = isset($_GET['studentName']) ? $studentName = $_GET['studentName'] : $studentName = '';
 
     //check if file exist
     $file = makeFile('timeLog.txt');
     
+    //check if student file exist
+    $students = makeFile('students.json');
+
+    //check if arrivals file exist
+    $students = makeFile('arrivals.json');
+    
     //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
-    //checkArrival($now);
+    checkArrival($now);
 
     echo "</br>";
     echo "</br>";
@@ -26,26 +29,83 @@
     //get student names from students.json
     $studentNames = getStudentNames('students.json');
 
+    //get arrivals from students.json
+    $arrivals = getArrivals('arrivals.json');
+
     //check if student has delay
     $delay = hasDelay($now, $studentName);
 
+    //check if student is already written in database
+    if (isWritten($array, $now, $delay, $studentName)) 
+    {
+        goToBase($base_url, 'Your arrival is already written!');
+    }
+
     //write data into timelog and students json file
-    $totalArrivals = pushData($array, $now, $delay, $studentName, $studentNames);
+    $totalArrivals = pushData($array, $now, $delay, $studentName, $studentNames, $arrivals);
+
+    echo "</br>";
+    echo "</br>";
 
     //number of total arrivals
     echo 'Count of arrivals: '.$totalArrivals;
 
-    //get data from time log to show with the newest record
+    //get data from time log to display with the newest record
     $array = getData('timeLog.txt');
 
+    //get students names from students map to dispaly with the newest record
+    $arrayStudents = getData('students.json');
+
+    //get arrivals from arrivals.json to dispaly with the newest record
+    $arrayArrivals = getArrivals('arrivals.json');
+
     echo "</br>";
     echo "</br>";
 
+    //display arrivals
     if ( !empty($array)) 
     {        
         foreach ($array as $data) 
         {
             echo $data['date'].' '.$data['delay'];
+            echo "</br>";
+        }
+    }
+    else 
+    {
+        echo 'Nothing to display!';
+        echo "</br>";
+    }
+
+    echo "</br>";
+    echo "</br>";
+
+    //display students
+    if ( !empty($arrayStudents)) 
+    {        
+        foreach ($arrayStudents as $data) 
+        {
+            echo $data;
+            echo "</br>";
+        }
+    }
+    else 
+    {
+        echo 'Nothing to display!';
+        echo "</br>";
+    }
+
+    echo "</br>";
+    echo "</br>";
+
+    //display arrivals
+    if ( !empty($arrayArrivals)) 
+    {        
+        foreach ($arrayArrivals as $data) 
+        {
+            $time = substr($data,-8);
+            $delay = hasDelay($time, null);
+            echo $time . ' ' .$delay;
             echo "</br>";
         }
     }

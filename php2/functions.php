@@ -25,27 +25,49 @@ function checkArrival($now)
 
 function hasDelay($now, $studentName, $schoolStartTime = '08:00:00', $possibleStartTime = '07:00:00')
 {
-	$schoolStart = date("d.m.Y").$schoolStartTime;
-		if (strtotime($now) > strtotime($schoolStart)) 
-		{
-			$origin = new DateTime($schoolStart);
-    		$target = new DateTime($now);
-    		$interval = $origin->diff($target);
+	if (isset($studentName)) 
+	{
+		$studentName = trim($studentName);
+		$schoolStart = date("d.m.Y").$schoolStartTime;
+			if (strtotime($now) > strtotime($schoolStart)) 
+			{
+				$origin = new DateTime($schoolStart);
+				$target = new DateTime($now);
+				$interval = $origin->diff($target);
 
-			$delayTime = vsprintf("%02d:%02d:%02d", [$interval->h, $interval->i, $interval->s]);
+				$delayTime = vsprintf("%02d:%02d:%02d", [$interval->h, $interval->i, $interval->s]);
 
-			$delay = $studentName.' is '.$delayTime.' late!';
-		}
-		elseif (strtotime($now) < strtotime($possibleStartTime)) 
-		{
-			$delay = $studentName.', did you really come to school before 7:00 AM ?!';
-		}
-		else 
-		{
-			$delay = '';
-		}
+				$delay = $studentName.' is '.$delayTime.' late!';
+			}
+			elseif (strtotime($now) < strtotime($possibleStartTime)) 
+			{
+				$delay = $studentName.', did you really come to school before 7:00 AM ?!';
+			}
+			else 
+			{
+				$delay = $studentName.' arrived on time!';
+			}
 
-	return $delay;
+		return $delay;
+	} 
+	else 
+	{
+		$schoolStart = date("d.m.Y").$schoolStartTime;
+			if (strtotime($now) > strtotime($schoolStart)) 
+			{
+				$origin = new DateTime($schoolStart);
+				$target = new DateTime($now);
+				$interval = $origin->diff($target);
+
+				$delay = 'Is late!';
+			}
+			else 
+			{
+				$delay = 'Arrived on time!';
+			}
+
+		return $delay;	
+	}
 }
 
 function getData($file)
@@ -69,8 +91,19 @@ function getStudentNames($file)
 	return $array;
 }
 
-function pushData($array, $now, $delay, $studentName, $studentNames)
+function getArrivals($file)
 {
+	//get arrivals from json file
+	$dataInFile = file_get_contents($file);
+
+	$array = json_decode($dataInFile, true) ?: [];
+
+	return $array;
+}
+
+function pushData($array, $now, $delay, $studentName, $studentNames, $arrivals)
+{
+	$studentName = trim($studentName);
 	//arrival time and delay time
     $data = [
         'date'  =>  $now,
@@ -78,54 +111,63 @@ function pushData($array, $now, $delay, $studentName, $studentNames)
 		'studentName' =>  $studentName
         ];
 	
-	if (is_string($data['studentName'])) 
+	if (is_string($data['studentName']) && !empty($_GET['studentName'])) 
 	{	
 	array_push($array, $data);
+	array_push($studentNames, $data['studentName']);
+	array_push($arrivals, $data['date']);
 
-	$totalArrivals = array_push($studentNames, $data['studentName']);
+	$totalArrivals = count($array);
 
     file_put_contents('timeLog.txt', json_encode($array));
 	file_put_contents('students.json', json_encode($studentNames));
+	file_put_contents('arrivals.json', json_encode($arrivals));
 
 	return $totalArrivals;
 	}
 	else 
 	{
-		print_r ('That is not name!');
+		print_r ('Write your name!');
+		$totalArrivals = count($array);
+
+		return $totalArrivals;
 	}
 }
 
-function goToBase ($url)
+function goToBase ($url, $message = 'Success!')
 {
     header("Location: $url/index.php");
-    die('success');
+    die($message);
 }
 
 //check if data are already in array
-function isWritten($array, $data)
+function isWritten($array, $now, $delay, $studentName)
 {
 	$intersectArray = [];
+	$studentName = trim($studentName);
+
+    $data = [
+        'date'  =>  $now,
+        'delay' =>  $delay,
+		'studentName' =>  $studentName
+        ];
 
 	foreach ($array as $value) 
 	{
-		$arrayDate = new DateTimeImmutable($value['date']);
-		$arrayDate = $arrayDate->format('d.m.Y');
-
-		$arrayString = $arrayDate.' '.$value['studentName'];
-
-		array_push($intersectArray, $arrayString);
+		array_push($intersectArray, implode(" ", $value));
 	}
 
-	$dataDate = new DateTimeImmutable($data['date']);
-	$dataDate = $dataDate->format('d.m.Y');
+	$data = [implode(" ", $data)];
 
-	$dataString = [$dataDate.' '.$data['studentName']];
-	
-	$compare = array_intersect($intersectArray, $dataString);
+	$compare = array_intersect($intersectArray, $data);
 
-	if ($compare) 
+	if (count($compare) > 0) 
 	{
-		print_r($data['studentName'].', your arrive is already recorded for today!');
+		return true;
+	}
+	else 
+	{
+		return false;
 	}
 }
 ?>
