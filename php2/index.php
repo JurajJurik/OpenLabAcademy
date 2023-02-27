@@ -3,7 +3,6 @@
     include 'config.php';
 
     $now = date("d.m.Y H:i:s");
-    $now = date("27.02.2023 08:01:43");
 
     include 'form.php';
 
