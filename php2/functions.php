@@ -101,7 +101,7 @@ function getArrivals($file)
 	return $array;
 }
 
-function pushData($array, $now, $delay, $studentName, $studentNames, $arrivals)
+function pushData($array, $now, $delay, $studentName)
 {
 	$studentName = trim($studentName);
 	//arrival time and delay time
@@ -110,29 +110,35 @@ function pushData($array, $now, $delay, $studentName, $studentNames, $arrivals)
         'delay' =>  $delay,
 		'studentName' =>  $studentName
         ];
-	
-	if (is_string($data['studentName']) && !empty($_GET['studentName'])) 
-	{	
+		
 	array_push($array, $data);
-	array_push($studentNames, $data['studentName']);
-	array_push($arrivals, $data['date']);
-
-	$totalArrivals = count($array);
 
     file_put_contents('timeLog.txt', json_encode($array));
+
+	return $array;
+}
+
+function pushStudent($studentName, $studentNames)
+{
+	$studentName = trim($studentName);
+
+	array_push($studentNames, $studentName);
+
 	file_put_contents('students.json', json_encode($studentNames));
+}
+
+function pushArrivals($array, $now, $arrivals)
+{	
+	array_push($arrivals, $now);
+
 	file_put_contents('arrivals.json', json_encode($arrivals));
+	
+	$totalArrivals = count($array);
 
 	return $totalArrivals;
-	}
-	else 
-	{
-		print_r ('Write your name!');
-		$totalArrivals = count($array);
-
-		return $totalArrivals;
-	}
 }
+
+
 
 function goToBase ($url, $message = 'Success!')
 {

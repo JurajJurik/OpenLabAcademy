@@ -3,6 +3,7 @@
     include 'config.php';
 
     $now = date("d.m.Y H:i:s");
+    $now = date("27.02.2023 08:01:43");
 
     include 'form.php';
 
@@ -18,7 +19,7 @@
     $students = makeFile('arrivals.json');
     
     //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
-    checkArrival($now);
+    //checkArrival($now);
 
     echo "</br>";
     echo "</br>";
@@ -41,8 +42,20 @@
         goToBase($base_url, 'Your arrival is already written!');
     }
 
+
+    if (is_string($studentName) && !empty($_GET['studentName'])) 
+    {
+    //write data into timelog
+    $array = pushData($array, $now, $delay, $studentName);
+
+    //write data into students json file
+    pushStudent($studentName, $studentNames);
+
     //write data into timelog and students json file
-    $totalArrivals = pushData($array, $now, $delay, $studentName, $studentNames, $arrivals);
+    $totalArrivals = pushArrivals($array, $now, $arrivals);
+    }else {
+        $totalArrivals = count($array);
+    }
 
     echo "</br>";
     echo "</br>";
@@ -63,6 +76,9 @@
     echo "</br>";
 
     //display arrivals
+    echo 'ARRIVALS';
+    echo "</br>";
+
     if ( !empty($array)) 
     {        
         foreach ($array as $data) 
@@ -81,6 +97,9 @@
     echo "</br>";
 
     //display students
+    echo 'STUDENTS';
+    echo "</br>";
+
     if ( !empty($arrayStudents)) 
     {        
         foreach ($arrayStudents as $data) 
@@ -99,6 +118,9 @@
     echo "</br>";
 
     //display arrivals
+    echo 'ON TIME or LATE';
+    echo "</br>";
+
     if ( !empty($arrayArrivals)) 
     {        
         foreach ($arrayArrivals as $data) 
