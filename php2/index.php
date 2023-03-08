@@ -1,6 +1,7 @@
 <?php
-    include 'functions.php';
     include 'config.php';
+    include 'functions.php';
+    include 'classes.php';
 
     $now = date("d.m.Y H:i:s");
 
@@ -15,10 +16,10 @@
     $students = makeFile('students.json');
 
     //check if arrivals file exist
-    $students = makeFile('arrivals.json');
+    $arrivals = makeFile('arrivals.json');
     
     //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
-    //checkArrival($now);
+    checkArrival($now);
 
     echo "</br>";
     echo "</br>";
@@ -27,10 +28,10 @@
     $array = getData('timeLog.txt');
 
     //get student names from students.json
-    $studentNames = getStudentNames('students.json');
+    $studentNames = Student::getStudentNames('students.json');
 
     //get arrivals from students.json
-    $arrivals = getArrivals('arrivals.json');
+    $arrivals = getData('arrivals.json');
 
     //check if student has delay
     $delay = hasDelay($now, $studentName);
@@ -48,10 +49,19 @@
     $array = pushData($array, $now, $delay, $studentName);
 
     //write data into students json file
-    pushStudent($studentName, $studentNames);
+    Student::pushStudent($studentName, $studentNames);
+
+    //creating an object of type Arrivals
+    $objArrivals = new Arrivals;
+
+    //set variables into Arrivals class
+    $objArrivals -> setVariables($array, $now, $arrivals);
 
     //write data into timelog and students json file
-    $totalArrivals = pushArrivals($array, $now, $arrivals);
+    $objArrivals -> pushArrivals($now, $arrivals);
+
+    //write data into timelog and students json file
+    $totalArrivals = $objArrivals -> getArrivals($array);
     }else {
         $totalArrivals = count($array);
     }
@@ -68,8 +78,8 @@
     //get students names from students map to dispaly with the newest record
     $arrayStudents = getData('students.json');
 
-    //get arrivals from arrivals.json to dispaly with the newest record
-    $arrayArrivals = getArrivals('arrivals.json');
+    //get arrivals from arrivals.json to display with the newest record
+    $arrayArrivals = getData('arrivals.json');
 
     echo "</br>";
     echo "</br>";

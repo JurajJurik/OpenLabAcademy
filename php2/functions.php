@@ -81,26 +81,6 @@ function getData($file)
 	return $array;
 }
 
-function getStudentNames($file)
-{
-	//get student name from json file
-	$dataInFile = file_get_contents($file);
-
-	$array = json_decode($dataInFile, true) ?: [];
-
-	return $array;
-}
-
-function getArrivals($file)
-{
-	//get arrivals from json file
-	$dataInFile = file_get_contents($file);
-
-	$array = json_decode($dataInFile, true) ?: [];
-
-	return $array;
-}
-
 function pushData($array, $now, $delay, $studentName)
 {
 	$studentName = trim($studentName);
@@ -117,28 +97,6 @@ function pushData($array, $now, $delay, $studentName)
 
 	return $array;
 }
-
-function pushStudent($studentName, $studentNames)
-{
-	$studentName = trim($studentName);
-
-	array_push($studentNames, $studentName);
-
-	file_put_contents('students.json', json_encode($studentNames));
-}
-
-function pushArrivals($array, $now, $arrivals)
-{	
-	array_push($arrivals, $now);
-
-	file_put_contents('arrivals.json', json_encode($arrivals));
-	
-	$totalArrivals = count($array);
-
-	return $totalArrivals;
-}
-
-
 
 function goToBase ($url, $message = 'Success!')
 {
