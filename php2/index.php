@@ -19,7 +19,7 @@
     $arrivals = makeFile('arrivals.json');
     
     //check if arrive time to school is between 20:00 and 00:00, if yes, it is not possible
-    checkArrival($now);
+    //checkArrival($now);
 
     echo "</br>";
     echo "</br>";
@@ -37,10 +37,12 @@
     $delay = hasDelay($now, $studentName);
 
     //check if student is already written in database
-    if (isWritten($array, $now, $delay, $studentName)) 
+    if (isWritten($array, $now, $studentName)) 
     {
         goToBase($base_url, 'Your arrival is already written!');
     }
+
+    var_dump(isWritten($array, $now, $studentName));
 
 
     if (is_string($studentName) && !empty($_GET['studentName'])) 
@@ -51,11 +53,8 @@
     //write data into students json file
     Student::pushStudent($studentName, $studentNames);
 
-    //creating an object of type Arrivals
-    $objArrivals = new Arrivals;
-
-    //set variables into Arrivals class
-    $objArrivals -> setVariables($array, $now, $arrivals);
+    //creating an object of type Arrivals and set variables
+    $objArrivals = new Arrivals($array, $now, $arrivals);
 
     //write data into timelog and students json file
     $objArrivals -> pushArrivals($now, $arrivals);

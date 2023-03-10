@@ -32,25 +32,25 @@ class Arrivals
     private $arrivals;
 
     //this function sets variables
-	function setVariables($array, $now, $arrivals) 
+	public function __construct($array, $now, $arrivals) 
     {
-		$this -> array = $array;
-        $this -> now = $now;
-        $this -> arrivals = $arrivals;
+		$this->array = $array;
+        $this->now = $now;
+        $this->arrivals = $arrivals;
 	}
 	
 	//This function push arrivals into arrivals.json file
 	function pushArrivals() 
     {
-		array_push($this -> arrivals, $this -> now);
+		array_push($this->arrivals, $this->now);
 
-	    file_put_contents('arrivals.json', json_encode($this -> arrivals));	
+	    file_put_contents('arrivals.json', json_encode($this->arrivals));	
 	}
 
     //This function return total arrivals
 	function getArrivals() 
     {
-        $totalArrivals = count($this -> array);
+        $totalArrivals = count($this->array);
 
         return $totalArrivals;
 	}

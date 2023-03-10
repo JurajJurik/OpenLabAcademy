@@ -19,7 +19,7 @@ function checkArrival($now)
 
 	if ($date->format('H') < 24 && $date->format('H') >= 20) 
 	{
-		die("It is not possible to arrive between 20:00 and 00:00 to school!");
+		echo "It is not possible to arrive between 20:00 and 00:00 to school!";
 	}
 }
 
@@ -101,31 +101,39 @@ function pushData($array, $now, $delay, $studentName)
 function goToBase ($url, $message = 'Success!')
 {
     header("Location: $url/index.php");
-    die($message);
+	echo $message;
+    //die($message);
 }
 
 //check if data are already in array
-function isWritten($array, $now, $delay, $studentName)
+function isWritten($array, $now, $studentName)
 {
 	$intersectArray = [];
 	$studentName = trim($studentName);
+	$now = new DateTimeImmutable($now);
+	$now = $now->format('d.m.Y');
 
     $data = [
         'date'  =>  $now,
-        'delay' =>  $delay,
 		'studentName' =>  $studentName
         ];
+	
+	$data = [$data['date'].' '.$data['studentName']];
 
 	foreach ($array as $value) 
 	{
-		array_push($intersectArray, implode(" ", $value));
+		$date = new DateTimeImmutable($value['date']);
+		$date = $date->format('d.m.Y');
+		$dateStr = [$date.' '.$value['studentName']];
+
+		array_push($intersectArray, implode(" ", $dateStr));
 	}
 
-	$data = [implode(" ", $data)];
+	$data = implode(" ", $data);
 
-	$compare = array_intersect($intersectArray, $data);
+	$compare = in_array($data, $intersectArray);
 
-	if (count($compare) > 0) 
+	if ($compare) 
 	{
 		return true;
 	}
