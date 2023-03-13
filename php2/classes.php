@@ -2,21 +2,36 @@
 
 class Data 
 {
-    public function pushData($array, $now, $delay, $studentName)
+    //define variables
+    private $array;
+    private $now;
+    private $delay;
+    private $studentName;
+
+    //this function sets variables
+	public function __construct($array, $now, $delay, $studentName) 
     {
-	$studentName = trim($studentName);
+		$this->array = $array;
+        $this->now = $now;
+        $this->delay = $delay;
+        $this->studentName = $studentName;
+	}
+
+    public function pushData()
+    {
+	$studentName = trim($this->studentName);
 	//arrival time and delay time
     $data = [
-        'date'  =>  $now,
-        'delay' =>  $delay,
+        'date'  =>  $this->now,
+        'delay' =>  $this->delay,
 		'studentName' =>  $studentName
         ];
 		
-	array_push($array, $data);
+	array_push($this->array, $data);
 
-    file_put_contents('timeLog.txt', json_encode($array));
+    file_put_contents('timeLog.txt', json_encode($this->array));
 
-	return $array;
+	return $this->array;
     }
 }
 

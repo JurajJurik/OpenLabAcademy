@@ -48,7 +48,8 @@
     if (is_string($studentName) && !empty($_GET['studentName'])) 
     {
     //write data into timelog
-    $array = Data::pushData($array, $now, $delay, $studentName);
+    $objData = new Data($array, $now, $delay, $studentName);
+    $array = $objData -> pushData($array, $now, $delay, $studentName);
 
     //write data into students json file
     Student::pushStudent($studentName, $studentNames, 'students.json');
