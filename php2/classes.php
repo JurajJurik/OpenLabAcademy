@@ -1,14 +1,41 @@
 <?php
 
+class Data 
+{
+    public function pushData($array, $now, $delay, $studentName)
+    {
+	$studentName = trim($studentName);
+	//arrival time and delay time
+    $data = [
+        'date'  =>  $now,
+        'delay' =>  $delay,
+		'studentName' =>  $studentName
+        ];
+		
+	array_push($array, $data);
+
+    file_put_contents('timeLog.txt', json_encode($array));
+
+	return $array;
+    }
+}
+
 class Student 
 {     
-    public static function pushStudent($studentName, $studentNames) 
+    public static function pushStudent($studentName, $studentNames, $file) 
     {
         $studentName = trim($studentName);
 
+        $array = Student::getStudentNames($file);
+
+        $data = in_array($studentName, $array);
+
+        if (!$data) {
         array_push($studentNames, $studentName);
 
         file_put_contents('students.json', json_encode($studentNames));
+        }
+
     }
 
     public static function getStudentNames($file) 

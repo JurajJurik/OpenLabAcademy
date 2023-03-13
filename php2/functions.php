@@ -81,23 +81,6 @@ function getData($file)
 	return $array;
 }
 
-function pushData($array, $now, $delay, $studentName)
-{
-	$studentName = trim($studentName);
-	//arrival time and delay time
-    $data = [
-        'date'  =>  $now,
-        'delay' =>  $delay,
-		'studentName' =>  $studentName
-        ];
-		
-	array_push($array, $data);
-
-    file_put_contents('timeLog.txt', json_encode($array));
-
-	return $array;
-}
-
 function goToBase ($url, $message = 'Success!')
 {
     header("Location: $url/index.php");
