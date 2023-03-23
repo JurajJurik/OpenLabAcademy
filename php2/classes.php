@@ -3,36 +3,91 @@
 class Data 
 {
     //define variables
-    private $array;
+    private $timeLog;
     private $now;
-    private $delay;
     private $studentName;
+    private $schoolStartTime;
+    private $possibleStartTime;
 
     //this function sets variables
-	public function __construct($array, $now, $delay, $studentName) 
+	public function __construct($timeLog, $now, $studentName, $schoolStartTime = '08:00:00', $possibleStartTime = '07:00:00') 
     {
-		$this->array = $array;
+		$this->timeLog = $timeLog;
         $this->now = $now;
-        $this->delay = $delay;
         $this->studentName = $studentName;
+        $this->schoolStartTime = $schoolStartTime;
+        $this->possibleStartTime = $possibleStartTime;
 	}
 
     public function pushData()
     {
 	$studentName = trim($this->studentName);
+
+    //check if student has delay
+    $delay = $this->hasDelay($this->now);
+    
 	//arrival time and delay time
     $data = [
         'date'  =>  $this->now,
-        'delay' =>  $this->delay,
+        'delay' =>  $delay,
 		'studentName' =>  $studentName
         ];
 		
-	array_push($this->array, $data);
+	array_push($this->timeLog, $data);
 
-    file_put_contents('timeLog.txt', json_encode($this->array));
+    file_put_contents('timeLog.txt', json_encode($this->timeLog));
 
-	return $this->array;
+	return $this->timeLog;
     }
+
+    private function hasDelay()
+    {
+        if (isset($this->studentName)) 
+        {
+            $studentName = trim($this->studentName);
+            $schoolStart = date("d.m.Y").$this->schoolStartTime;
+                if (strtotime($this->now) > strtotime($schoolStart)) 
+                {
+                    $origin = new DateTime($schoolStart);
+                    $target = new DateTime($this->now);
+                    $interval = $origin->diff($target);
+
+                    $delayTime = vsprintf("%02d:%02d:%02d", [$interval->h, $interval->i, $interval->s]);
+
+                    $delay = $studentName.' is '.$delayTime.' late!';
+                }
+                elseif (strtotime($this->now) < strtotime($this->possibleStartTime)) 
+                {
+                    $delay = $this->studentName.', did you really come to school before 7:00 AM ?!';
+                }
+                else 
+                {
+                    $delay = $this->studentName.' arrived on time!';
+                }
+
+            return $delay;
+        } 
+        else 
+        {
+            $schoolStart = date("d.m.Y").$this->schoolStartTime;
+                if (strtotime($this->now) > strtotime($schoolStart)) 
+                {
+                    $origin = new DateTime($schoolStart);
+                    $target = new DateTime($this->now);
+                    $interval = $origin->diff($target);
+
+                    $delay = 'Is late!';
+                }
+                else 
+                {
+                    $delay = 'Arrived on time!';
+                }
+
+            return $delay;	
+        }
+    }
+
+
 }
 
 class Student 

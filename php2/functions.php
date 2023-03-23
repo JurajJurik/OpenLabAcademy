@@ -1,4 +1,5 @@
 <?php
+include 'config.php';
 
 function makeFile( $filename )
 {
@@ -23,53 +24,6 @@ function checkArrival($now)
 	}
 }
 
-function hasDelay($now, $studentName, $schoolStartTime = '08:00:00', $possibleStartTime = '07:00:00')
-{
-	if (isset($studentName)) 
-	{
-		$studentName = trim($studentName);
-		$schoolStart = date("d.m.Y").$schoolStartTime;
-			if (strtotime($now) > strtotime($schoolStart)) 
-			{
-				$origin = new DateTime($schoolStart);
-				$target = new DateTime($now);
-				$interval = $origin->diff($target);
-
-				$delayTime = vsprintf("%02d:%02d:%02d", [$interval->h, $interval->i, $interval->s]);
-
-				$delay = $studentName.' is '.$delayTime.' late!';
-			}
-			elseif (strtotime($now) < strtotime($possibleStartTime)) 
-			{
-				$delay = $studentName.', did you really come to school before 7:00 AM ?!';
-			}
-			else 
-			{
-				$delay = $studentName.' arrived on time!';
-			}
-
-		return $delay;
-	} 
-	else 
-	{
-		$schoolStart = date("d.m.Y").$schoolStartTime;
-			if (strtotime($now) > strtotime($schoolStart)) 
-			{
-				$origin = new DateTime($schoolStart);
-				$target = new DateTime($now);
-				$interval = $origin->diff($target);
-
-				$delay = 'Is late!';
-			}
-			else 
-			{
-				$delay = 'Arrived on time!';
-			}
-
-		return $delay;	
-	}
-}
-
 function getData($file)
 {
 	//get data from time log
@@ -89,7 +43,7 @@ function goToBase ($url, $message = 'Success!')
 }
 
 //check if data are already in array
-function isWritten($array, $now, $studentName)
+function isDataWritten($array, $now, $studentName)
 {
 	$intersectArray = [];
 	$studentName = trim($studentName);
@@ -124,5 +78,103 @@ function isWritten($array, $now, $studentName)
 	{
 		return false;
 	}
+}
+
+function fileExist()
+{
+	//check if file exist
+    $file = makeFile('timeLog.txt');
+    
+    //check if student file exist
+    $students = makeFile('students.json');
+
+    //check if arrivals file exist
+    $arrivals = makeFile('arrivals.json');
+}
+
+function getAllData()
+{
+	//get data from time log
+    $timeLog = getData('timeLog.txt');
+
+    //get student names from students.json
+    $studentNames = Student::getStudentNames('students.json');
+
+    //get arrivals from students.json
+    $arrivals = getData('arrivals.json');
+}
+
+function isWritten($timeLog, $now, $studentName)
+{
+    if (isDataWritten($timeLog, $now, $studentName)) 
+    {
+        goToBase($base_url, 'Your arrival is already written!');
+    }
+}
+
+function displayArrivals($timeLog)
+{
+	if ( !empty($timeLog)) 
+    {        
+        foreach ($timeLog as $data) 
+        {
+            echo $data['date'].' '.$data['delay'];
+            echo "</br>";
+        }
+    }
+    else 
+    {
+        echo 'Nothing to display!';
+        echo "</br>";
+    }
+}
+
+function displayStudents($arrayStudents)
+{
+	    if ( !empty($arrayStudents)) 
+    {        
+        foreach ($arrayStudents as $data) 
+        {
+            echo $data;
+            echo "</br>";
+        }
+    }
+    else 
+    {
+        echo 'Nothing to display!';
+        echo "</br>";
+    }
+}
+
+function displayArrivalTime($arrayArrivals, $timeLog)
+{
+	    if ( !empty($arrayArrivals)) 
+    {        
+        foreach ($arrayArrivals as $key => $data) 
+        {
+            $time = substr($data,-8);
+            $delay = $timeLog[$key]['delay'];
+            echo $time . ' ' .$delay;
+            echo "</br>";
+        }
+    }
+    else 
+    {
+        echo 'Nothing to display!';
+        echo "</br>";
+    }
+}
+
+function totalArrivals($studentName, $objArrivals, $array, $timeLog)
+{
+    if (is_string($studentName) && !empty($_GET['studentName'])) 
+    {
+    //get count of total arrivals
+    $totalArrivals = $objArrivals -> getArrivals($array);
+    }else {
+        $totalArrivals = count($timeLog);
+    }
+
+	return $totalArrivals;
 }
 ?>
