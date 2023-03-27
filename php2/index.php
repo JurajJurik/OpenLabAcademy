@@ -4,7 +4,7 @@
     include 'classes.php';
     include 'form.php';
 
-    $studentName = isset($_GET['studentName']) ? $studentName = $_GET['studentName'] : $studentName = '';
+    $studentName = isset($_GET['studentName']) ? $_GET['studentName'] : '';
 
     //check if log files exists
     fileExist();
@@ -27,11 +27,11 @@
     //check if student is already written in database
     isWritten($timeLog, $now, $studentName);
 
-    if (is_string($studentName) && !empty($_GET['studentName'])) 
+    if (is_string($studentName) && !empty($studentName)) 
     {
     //write data into timelog
     $objData = new Data($timeLog, $now, $studentName);
-    $timeLog = $objData -> pushData($timeLog, $now, $studentName);
+    $timeLog = $objData -> pushData();
 
     //write data into students json file
     Student::pushStudent($studentName, $studentNames, 'students.json');
@@ -40,10 +40,10 @@
     $objArrivals = new Arrivals($timeLog, $now, $arrivals);
 
     //write data into arrivals json file
-    $objArrivals -> pushArrivals($now, $arrivals);
+    $objArrivals -> pushArrivals();
 
     //get count of total arrivals
-    $totalArrivals = $objArrivals -> getArrivals($timeLog);
+    $totalArrivals = $objArrivals -> getArrivals();
     }else {
         $totalArrivals = count($timeLog);
     }

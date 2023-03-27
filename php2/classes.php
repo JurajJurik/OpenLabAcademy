@@ -21,23 +21,23 @@ class Data
 
     public function pushData()
     {
-	$studentName = trim($this->studentName);
+        $studentName = trim($this->studentName);
 
-    //check if student has delay
-    $delay = $this->hasDelay($this->now);
-    
-	//arrival time and delay time
-    $data = [
-        'date'  =>  $this->now,
-        'delay' =>  $delay,
-		'studentName' =>  $studentName
-        ];
-		
-	array_push($this->timeLog, $data);
+        //check if student has delay
+        $delay = $this->hasDelay($this->now);
+        
+        //arrival time and delay time
+        $data = [
+            'date'  =>  $this->now,
+            'delay' =>  $delay,
+            'studentName' =>  $studentName
+            ];
+            
+        array_push($this->timeLog, $data);
 
-    file_put_contents('timeLog.txt', json_encode($this->timeLog));
+        file_put_contents('timeLog.txt', json_encode($this->timeLog));
 
-	return $this->timeLog;
+        return $this->timeLog;
     }
 
     private function hasDelay()
@@ -124,14 +124,14 @@ class Student
 class Arrivals
 {
 	//define variables
-    private $array;
+    private $timeLog;
     private $now;
     private $arrivals;
 
     //this function sets variables
-	public function __construct($array, $now, $arrivals) 
+	public function __construct($timeLog, $now, $arrivals) 
     {
-		$this->array = $array;
+		$this->timeLog = $timeLog;
         $this->now = $now;
         $this->arrivals = $arrivals;
 	}
@@ -147,7 +147,7 @@ class Arrivals
     //This function return total arrivals
 	function getArrivals() 
     {
-        $totalArrivals = count($this->array);
+        $totalArrivals = count($this->timeLog);
 
         return $totalArrivals;
 	}
